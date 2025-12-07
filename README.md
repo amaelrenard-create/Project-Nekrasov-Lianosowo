@@ -2,3 +2,4 @@
 Members Artjom, Sascha, Amael 
 print ("Саша дура")
 ты дебилище
+и т.д.
