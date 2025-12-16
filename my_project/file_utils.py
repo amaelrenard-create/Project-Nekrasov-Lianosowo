@@ -1,8 +1,22 @@
 import os
 
 def read_text_file(filepath):
-    pass
+    """
+    Читает содержимое текстового файла.
 
+    Args:
+        filepath (str): Путь к файлу
+
+    Returns:
+        str: Содержимое файла или сообщение об ошибке
+    """
+    # Ваш код здесь
+    try:
+        with open(filepath,"r", encoding="utf-8") as f:
+            content = f.read()
+    except FileNotFoundError:
+        return "Ошибка: Файл не найден"
+    return content
 
 def read_csv_file(filepath):
     """
@@ -14,7 +28,6 @@ def read_csv_file(filepath):
     Returns:
         list: Список словарей, где ключи — названия колонок """
 
-def read_csv_file(filepath):
     data = []
     try:
         with open (filepath, "r", encoding = "utf-8") as file:
