@@ -1,4 +1,69 @@
+import os
+
+def read_text_file(filepath):
+    pass
+
+
+def read_csv_file(filepath):
+    """
+    Читает CSV файл и возвращает список словарей.
+
+    Args:
+        filepath (str): Путь к CSV файлу
+
+    Returns:
+        list: Список словарей, где ключи — названия колонок """
+
+def read_csv_file(filepath):
+    data = []
+    try:
+        with open (filepath, "r", encoding = "utf-8") as file:
+            content = file.readlines()
+            headers = content[0].strip().split(',')
+            for line in content[1:]:
+                data_dict_for_one_row = {}
+                values = line.strip().split(",")
+                for i in range(len(values)):
+                    data_dict_for_one_row[headers[i]] = values[i]
+                data.append(data_dict_for_one_row)
+        return data
+    except FileNotFoundError:
+        print (f"Файл не найден: {filepath}")
+        return data
+    except Exception as e:
+        print (f'Ошибка при чтении файла {filepath}: {e}')
+        return data
+
+def write_csv_file(filepath, data, headers):
+    """
+    Записывает данные в CSV файл.
+
+    Args:
+        filepath (str): Полный путь к файлу, включая папку и название файла
+                       Например: 'results/statistics.csv'
+        data (list): Список списков [[val1, val2], [val1, val2], ...]
+        headers (list): Список заголовков ['col1', 'col2']
+
+    Returns:
+        bool: True если успешно
+    """
+    import os 
+    folder = os.path.dirname(filepath)
+    os.makedirs(folder, exist_ok=True)
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(",".join(str(v) for v in row) + "/n")
+    if folder:
+        l = True
+    return l
+
+
+
+def write_text_file(filepath, content):
+    pass
+
+
 def get_files_in_folder(folder_path, extension='.txt'):
+    passdef get_files_in_folder(folder_path, extension='.txt'):
     """
     Получает список файлов в указанной папке с заданным расширением.
 
