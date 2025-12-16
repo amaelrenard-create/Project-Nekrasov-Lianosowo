@@ -69,7 +69,28 @@ def write_csv_file(filepath, data, headers):
         l = True
     return l
 
+def write_text_file(filepath, text):
+    """
+    Создаёт текстовый файл и записывает в него текст.
 
+    Args:
+        filepath (str): Путь и имя файла для записи
+        text (str): Текст для записи
+
+    Returns:
+        bool: True, если запись прошла успешно, иначе False
+    """
+    folder = os.path.dirname(filepath)
+    if folder:
+        os.makedirs(folder, exist_ok=True)
+    
+    try:
+        with open(filepath, 'w', encoding='utf-8') as file:
+            file.write(text)
+        return True
+    except Exception as e:
+        print(f"Ошибка при записи файла {filepath}: {e}")
+        return False
 
 def get_files_in_folder(folder_path, extension='.txt'):
     passdef get_files_in_folder(folder_path, extension='.txt'):
@@ -92,15 +113,3 @@ def get_files_in_folder(folder_path, extension='.txt'):
     return list
 
 
-
-if __name__ == "__main__":
-    files = get_files_in_folder('corpus', '.txt')
-    print(f"Найдено файлов: {len(files)}")
-
-
-
-if __name__ == "__main__":
-    data = [["text1.txt","Ночью/Ничего нет","Всеволод Некрасов",None], ["text2.txt","быстро","Всеволод Некрасов",None]]
-    headers = ["filename","title","author","year"]
-    exmpl = write_csv_file("results/statistics.csv", data, headers)
-    print(exmpl)
