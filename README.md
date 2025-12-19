@@ -6,7 +6,7 @@
 
 ## Структура Проекта:
 ```
-corpus_project/
+my_project/
 ├── corpus/
 │   └── *.txt                  # Тексты стихотворений
 │
