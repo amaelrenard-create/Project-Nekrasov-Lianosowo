@@ -3,10 +3,6 @@ import os
 from file_utils import get_files_in_folder, read_text_file, read_csv_file, write_csv_file
 from text_utils import count_words, count_unique_words, calculate_ttr, get_most_common_words, count_lines, average_word_length, calculate_lexical_density
 
-import os
-from file_utils import get_files_in_folder, read_text_file, read_csv_file, write_csv_file
-from text_utils import count_words, count_unique_words, calculate_ttr, get_most_common_words, count_lines, average_word_length, calculate_lexical_density
-
 def analyze_single_text(filepath, filename):
     """
     Анализирует один текстовый файл.
@@ -30,6 +26,7 @@ def analyze_single_text(filepath, filename):
         'filename': filename,
         'word_count': count_words(text),
         'unique_words': count_unique_words(text),
+        'most_common': get_most_common_words(text, n = 1),
         'ttr': calculate_ttr(text),
         'line_count': count_lines(text),
         'avg_word_length': average_word_length(text),
@@ -49,13 +46,7 @@ def analyze_single_text(filepath, filename):
     
     return result
 
-
-def analyze_corpus(corpus_folder='corpus'):
-    # эта функция использует analyze_single_text
-    ...
-
-
-def analyze_corpus(corpus_folder='corpus'):
+def analyze_corpus(corpus_folder='my_project/corpus'):
     """
     Анализирует все тексты в папке, сохраняет результаты и выводит статистику.
     
@@ -79,9 +70,9 @@ def analyze_corpus(corpus_folder='corpus'):
     print(f"✅ Найдено файлов: {len(files)}")
     
     # 2. Создаем папку results, если её нет
-    if not os.path.exists('results'):
-        os.makedirs('results')
-        print("📁 Создана папка 'results/'")
+    if not os.path.exists('my_project/results'):
+        os.makedirs('my_project/results')
+        print("📁 Создана папка 'my_project/results/'")
     
     # 3. Анализируем каждый файл
     all_results = []
@@ -101,7 +92,7 @@ def analyze_corpus(corpus_folder='corpus'):
     
     # 4. Загружаем метаданные (если есть)
     metadata = {}
-    metadata_path = 'data/metadata.csv'
+    metadata_path = 'my_project/data/metadata.csv'
     
     if os.path.exists(metadata_path):
         print(f"\n📄 Загружаем метаданные из {metadata_path}...")
@@ -147,7 +138,7 @@ def analyze_corpus(corpus_folder='corpus'):
     # Определяем заголовки для CSV
     headers = [
         'filename', 'title', 'author', 'year', 'genre',
-        'word_count', 'unique_words', 'ttr', 'line_count',
+        'word_count', 'unique_words', 'most_common', 'ttr', 'line_count',
         'avg_word_length', 'lexical_density', 'noun_density',
         'adj_density', 'verb_density'
     ]
@@ -163,11 +154,17 @@ def analyze_corpus(corpus_folder='corpus'):
     for result in enriched_results:
         row = []
         for header in available_headers:
-            row.append(result.get(header, ''))
+            if header == 'most_common':
+                most_common = result.get('most_common', [])
+                if most_common:
+                    row.append(", ".join([f"{word}; ({count})" for word, count in most_common]))
+                else:
+                    row.append("")
+            else:
+                row.append(result.get(header, ''))
         csv_data.append(row)
-
-    write_csv_file("results/statistics.csv", csv_data, available_headers)
-    print(f"✅ Результаты сохранены в results/statistics.csv")
+    write_csv_file("my_project/results/statistics.csv", csv_data, available_headers)
+    print(f"✅ Результаты сохранены в my_project/results/statistics.csv")
     
     # 7. Генерируем и сохраняем текстовый отчет
     generate_report(enriched_results, corpus_folder)
@@ -236,6 +233,12 @@ def generate_report(results, corpus_folder):
         
         report_lines.append(f"   Слов: {result.get('word_count', 0):,}")
         report_lines.append(f"   Уникальных слов: {result.get('unique_words', 0):,}")
+        most_common = result.get('most_common', [])
+        if most_common:
+            words_str = ", ".join([f"{word} ({count})" for word, count in most_common])
+            report_lines.append(f"   Самые частые слова: {words_str}")
+        else:
+            report_lines.append("   Самые частые слова: не найдены")
         report_lines.append(f"   TTR: {result.get('ttr', 0):.4f}")
         report_lines.append(f"   Строк: {result.get('line_count', 0):,}")
         report_lines.append(f"   Ср. длина слова: {result.get('avg_word_length', 0):.2f}")
@@ -284,13 +287,13 @@ def generate_report(results, corpus_folder):
     
     # Сохраняем отчет в файл
     report_content = "\n".join(report_lines)
-    write_csv_file("results/report.txt", [{'report': report_content}], ['report'])
+    write_csv_file("my_project/results/report.txt", [{'report': report_content}], ['report'])
     
     # Также сохраняем как обычный текстовый файл
-    with open("results/report.txt", "w", encoding="utf-8") as f:
+    with open("my_project/results/report.txt", "w", encoding="utf-8") as f:
         f.write(report_content)
     
-    print(f"✅ Отчет сохранен в results/report.txt")
+    print(f"✅ Отчет сохранен в my_project/results/report.txt")
 
 def print_summary(results):
     """
@@ -331,7 +334,7 @@ def main():
     print("=" * 60)
 
     # Проверяем наличие папки corpus
-    corpus_folder = 'corpus'
+    corpus_folder = 'my_project/corpus'
     if not os.path.exists(corpus_folder):
         print(f"❌ Папка '{corpus_folder}' не найдена!")
         print("   Убедитесь, что папка с текстами существует.")
