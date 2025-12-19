@@ -100,5 +100,3 @@ def average_word_length(text):
 if __name__ == "__main__":
     text = read_text_file("corpus/limonov001.txt")
     print(count_words(text))
-
-
