@@ -95,9 +95,3 @@ def average_word_length(text):
     
     total_length = sum(len(word) for word in words)
     return total_length / len(words)
-
-
-if __name__ == "__main__":
-    text = read_text_file("corpus/limonov001.txt")
-    print(count_words(text))
-
