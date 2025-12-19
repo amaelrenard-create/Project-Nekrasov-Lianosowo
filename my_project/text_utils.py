@@ -1,3 +1,5 @@
+import os
+from file_utils import read_text_file
 
 def count_words(text):
     """
@@ -45,7 +47,7 @@ def calculate_ttr(text):
     return len(unique_words) / len(words)
 
 def get_most_common_words(text, n=10):
-     """
+    """
     Находит n самых часто встречающихся слов
 
     Args:
@@ -77,7 +79,7 @@ def count_lines(text):
     return len(text.splitlines())
 
 def average_word_length(text):
-     """
+    """
     Вычисляет среднюю длину слова в тексте.
 
     Args:
@@ -94,5 +96,9 @@ def average_word_length(text):
     total_length = sum(len(word) for word in words)
     return total_length / len(words)
 
+
+if __name__ == "__main__":
+    text = read_text_file("corpus/limonov001.txt")
+    print(count_words(text))
 
 
