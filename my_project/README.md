@@ -15,12 +15,13 @@ main.py - основной исполняемый файл проекта.
 file_utils.py - модуль с функциями для работы с файлами.
 file_utils.py - модуль с функциями для анализа текста
 
-"corpus/
+```
+corpus/
 ├── text_1.txt
 ├── text_2.txt
 ├── text_3.txt
 ├── text_4.txt
 └── text_5.txt
-"
+```
 ## Как Запустить
 python main.py
