@@ -1,6 +1,6 @@
 import os
 from file_utils import get_files_in_folder, read_text_file, read_csv_file, write_csv_file
-from text_utils import count_words
+from text_utils import count_words, count_unique_words, calculate_ttr, get_most_common_words, count_lines, average_word_length
 
 def main():
     """Главная функция программы."""
@@ -62,20 +62,45 @@ def analyze_corpus(corpus_folder):
         wordnum = count_words(text)
         list_inf.append(wordnum)
         data.append(list_inf)
-    head = ['filename', 'word_count']
-    write_csv_file("results/statistics.csv", data, head)
+
+    line_count = count_lines(text)
+    avg_len = average_word_length(text)
+
+    row = [
+        file,
+        data.get("author", "unknown"),
+        data.get("date", "unknown"),
+        data.get("genre", "unknown"),
+        wordnum,
+        line_count,
+        avg_len
+    ]
+
+    headers = [
+        "filename",
+        "author",
+        "date",
+        "genre",
+        "word_count",
+        "char_count",
+        "line_count",
+        "avg_word_length"
+    ]
+
+    write_csv_file("results/statistics.csv", data, headers)
     results_list = read_csv_file("results/statistics.csv")
     print(f"✅ Проанализировано файлов: {len(files)}")
     print(f"Результаты сохранены в results/statistics.csv\n")
     sum = 0
     i = 0
     for nam in results_list:
-        print (f"{nam["filename"]}: {nam["word_count"]} слов")
+        print(nam["filename"], nam["word_count"])
         sum += int(nam["word_count"])
         i += 1
-    print ("Общее количество слов в корпусе:", sum)
+    print("Общее количество слов в корпусе:", sum)
     mid = sum/i
-    print ("Среднее число слов:", round(mid, 2))
+    print("Среднее число слов:", round(mid, 2))
 
 if __name__ == '__main__':
-    analyze_corpus("corpus")
+    print(data)
+
