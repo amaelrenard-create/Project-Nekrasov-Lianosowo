@@ -59,7 +59,7 @@ def get_most_common_words(text, n=10):
                         отсортированных по убыванию частоты
     """
     words = text.lower().split()
-    stopwords = ('в', "—", "и","на", "с")
+    stopwords = ('в', "—", "и","на", "с", "(", ")", "-")
     for wordy in stopwords:
         for l in words:
             if wordy == l:
