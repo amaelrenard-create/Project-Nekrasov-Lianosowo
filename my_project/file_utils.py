@@ -60,13 +60,18 @@ def write_csv_file(filepath, data, headers):
     Returns:
         bool: True если успешно
     """
-    import os 
+    import os
     folder = os.path.dirname(filepath)
     os.makedirs(folder, exist_ok=True)
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write(",".join(str(v) for v in row) + "/n")
-    if folder:
-        l = True
+    try:
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(','.join(headers) + '\n')
+            for row in data:
+                f.write(','.join(str(v) for v in row) + '\n')
+        if folder:
+            l = True
+    except Exception as e:
+        print (f"Ошибка при записи файла {filepath}: {e}")   
     return l
 
 def write_text_file(filepath, text):
@@ -93,7 +98,7 @@ def write_text_file(filepath, text):
         return False
 
 def get_files_in_folder(folder_path, extension='.txt'):
-    passdef get_files_in_folder(folder_path, extension='.txt'):
+    
     """
     Получает список файлов в указанной папке с заданным расширением.
 
@@ -111,5 +116,4 @@ def get_files_in_folder(folder_path, extension='.txt'):
         if filename.endswith(extension):
             list.append(filename)
     return list
-
 
