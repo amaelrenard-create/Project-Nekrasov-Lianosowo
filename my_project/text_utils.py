@@ -105,81 +105,110 @@ def calculate_lexical_density(text):
         text (str): Исходный текст
     
     Returns:
-        dict: Словарь с метриками лексической плотности:
-            - 'lexical_density': общая лексическая плотность (доля)
-            - 'noun_density': плотность существительных (доля)
-            - 'adj_density': плотность прилагательных (доля)
-            - 'verb_density': плотность глаголов (доля)
+        dict: Словарь с метриками лексической плотности
     """
     try:
         import pymorphy3
         import re
-    except ImportError:
-        print("Внимание: Для расчета лексической плотности установите pymorphy3: pip install pymorphy3")
-        return {
-            'lexical_density': 0.0,
-            'noun_density': 0.0,
-            'adj_density': 0.0,
-            'verb_density': 0.0
-        }
-    
-    # Инициализация анализатора
-    morph = pymorphy3.MorphAnalyzer()
-    
-    def preprocess_text(text):
-        """Очистка текста для морфологического анализа"""
-        if not isinstance(text, str):
-            return ""
-        text = re.sub(r'[^\w\s]', ' ', text)
-        text = text.lower()
-        text = re.sub(r'\s+', ' ', text).strip()
-        return text
-    
-    def get_pos_tag(word):
-        """Определяет часть речи для слова"""
+        import sys
+        
+        # Проверяем, что текст - строка
+        if not isinstance(text, str) or not text.strip():
+            return {
+                'lexical_density': 0.0,
+                'noun_density': 0.0,
+                'adj_density': 0.0,
+                'verb_density': 0.0
+            }
+        
+        # Инициализация анализатора с русским языком
         try:
-            parsed = morph.parse(word)[0]
-            pos = parsed.tag.POS
-            if pos in ['NOUN', 'NPRO']:
-                return 'NOUN'
-            elif pos in ['ADJF', 'ADJS', 'COMP']:
-                return 'ADJ'
-            elif pos in ['VERB', 'INFN', 'GRND', 'PRTF', 'PRTS']:
-                return 'VERB'
-            else:
-                return 'OTHER'
+            morph = pymorphy3.MorphAnalyzer(lang='ru')
         except:
-            return 'OTHER'
-    
-    # Основная логика
-    processed_text = preprocess_text(text)
-    words = processed_text.split()
-    total_words = len(words)
-    
-    if total_words == 0:
+            morph = pymorphy3.MorphAnalyzer()
+        
+        def preprocess_text(text):
+            """Очистка текста для морфологического анализа"""
+            # Приводим к нижнему регистру
+            text = text.lower()
+            # Оставляем только русские буквы и пробелы
+            text = re.sub(r'[^а-яё\s]', ' ', text)
+            # Убираем лишние пробелы
+            text = re.sub(r'\s+', ' ', text).strip()
+            return text
+        
+        def get_pos_tag(word):
+            """Определяет часть речи для слова"""
+            try:
+                if len(word) < 2:  # Слишком короткие слова пропускаем
+                    return 'OTHER'
+                
+                parsed = morph.parse(word)[0]
+                pos = parsed.tag.POS
+                
+                # Существительные
+                if pos in ['NOUN', 'NPRO']:
+                    return 'NOUN'
+                # Прилагательные
+                elif pos in ['ADJF', 'ADJS', 'COMP']:
+                    return 'ADJ'
+                # Глаголы и их формы
+                elif pos in ['VERB', 'INFN', 'GRND', 'PRTF', 'PRTS']:
+                    return 'VERB'
+                else:
+                    return 'OTHER'
+            except:
+                return 'OTHER'
+        
+        # Обрабатываем текст
+        processed_text = preprocess_text(text)
+        words = [w for w in processed_text.split() if len(w) >= 2]  # Берем слова от 2 букв
+        
+        if not words:
+            return {
+                'lexical_density': 0.0,
+                'noun_density': 0.0,
+                'adj_density': 0.0,
+                'verb_density': 0.0
+            }
+        
+        # Считаем части речи
+        counts = {'NOUN': 0, 'ADJ': 0, 'VERB': 0, 'OTHER': 0}
+        for word in words:
+            pos = get_pos_tag(word)
+            counts[pos] += 1
+        
+        total = len(words)
+        
+        # Для отладки
+        print(f"  Слов для анализа: {total}, существительных: {counts['NOUN']}, прилагательных: {counts['ADJ']}, глаголов: {counts['VERB']}")
+        
+        # Рассчитываем плотности
+        noun_density = counts['NOUN'] / total if total > 0 else 0
+        adj_density = counts['ADJ'] / total if total > 0 else 0
+        verb_density = counts['VERB'] / total if total > 0 else 0
+        lexical_density = (counts['NOUN'] + counts['ADJ'] + counts['VERB']) / total if total > 0 else 0
+        
+        return {
+            'lexical_density': round(lexical_density, 4),
+            'noun_density': round(noun_density, 4),
+            'adj_density': round(adj_density, 4),
+            'verb_density': round(verb_density, 4)
+        }
+        
+    except ImportError:
+        print("  pymorphy3 не установлен. Установите: pip install pymorphy3")
         return {
             'lexical_density': 0.0,
             'noun_density': 0.0,
             'adj_density': 0.0,
             'verb_density': 0.0
         }
-    
-    # Считаем части речи
-    pos_counts = {'NOUN': 0, 'ADJ': 0, 'VERB': 0, 'OTHER': 0}
-    for word in words:
-        pos = get_pos_tag(word)
-        if pos in pos_counts:
-            pos_counts[pos] += 1
-    
-    # Вычисляем плотности
-    noun_density = pos_counts['NOUN'] / total_words
-    adj_density = pos_counts['ADJ'] / total_words
-    verb_density = pos_counts['VERB'] / total_words
-    lexical_density = (pos_counts['NOUN'] + pos_counts['ADJ'] + pos_counts['VERB']) / total_words
-    
-    return {
-        'lexical_density': round(lexical_density, 4),
-        'noun_density': round(noun_density, 4),
-        'adj_density': round(adj_density, 4),
-        'verb_density': round(verb_density, 4)
-    }
+    except Exception as e:
+        print(f"  Ошибка при расчете лексической плотности: {e}")
+        return {
+            'lexical_density': 0.0,
+            'noun_density': 0.0,
+            'adj_density': 0.0,
+            'verb_density': 0.0
+        }

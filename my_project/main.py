@@ -3,6 +3,10 @@ import os
 from file_utils import get_files_in_folder, read_text_file, read_csv_file, write_csv_file
 from text_utils import count_words, count_unique_words, calculate_ttr, get_most_common_words, count_lines, average_word_length, calculate_lexical_density
 
+import os
+from file_utils import get_files_in_folder, read_text_file, read_csv_file, write_csv_file
+from text_utils import count_words, count_unique_words, calculate_ttr, get_most_common_words, count_lines, average_word_length, calculate_lexical_density
+
 def analyze_single_text(filepath, filename):
     """
     Анализирует один текстовый файл.
@@ -31,7 +35,7 @@ def analyze_single_text(filepath, filename):
         'avg_word_length': average_word_length(text),
     }
     
-    # Лексическая плотность (если функция доступна)
+    # Лексическая плотность
     try:
         lex_metrics = calculate_lexical_density(text)
         result.update({
@@ -41,10 +45,15 @@ def analyze_single_text(filepath, filename):
             'verb_density': lex_metrics['verb_density'],
         })
     except NameError:
-        # Если функция calculate_lexical_density не импортирована
         print(f"  ⚠️ Функция лексической плотности не доступна для {filename}")
     
     return result
+
+
+def analyze_corpus(corpus_folder='corpus'):
+    # эта функция использует analyze_single_text
+    ...
+
 
 def analyze_corpus(corpus_folder='corpus'):
     """
@@ -236,7 +245,7 @@ def generate_report(results, corpus_folder):
     
     # Выводы
     report_lines.append("\n" + "=" * 60)
-    report_lines.append("💡 ВЫВОДЫ И НАБЛЮДЕНИЯ:")
+    report_lines.append("💡 РЕЗУЛЬТАТЫ:")
     report_lines.append("=" * 60)
     
     if results:
@@ -340,9 +349,6 @@ def main():
         print("   - report.txt: полный отчет с выводами")
     else:
         print("\n❌ Анализ не дал результатов. Проверьте файлы в корпусе.")
-
-if __name__ == '__main__':
-    main()
 
 if __name__ == '__main__':
     main()
