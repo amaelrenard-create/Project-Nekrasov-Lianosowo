@@ -27,4 +27,3 @@ corpus_project/
 ## Как Запустить
 ```
 python main.py
-
