@@ -16,4 +16,4 @@ file_utils.py - модуль с функциями для работы с фай
 file_utils.py - модуль с функциями для анализа текста
 
 ## Как Запустить
-/python main.py
+python main.py
