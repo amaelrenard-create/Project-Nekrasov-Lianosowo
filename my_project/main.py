@@ -152,11 +152,11 @@ def analyze_corpus(corpus_folder='corpus'):
     # Готовим данные для записи (только доступные поля)
     csv_data = []
     for result in enriched_results:
-        row = {}
+        row = []
         for header in available_headers:
-            row[header] = result.get(header, '')
+            row.append(result.get(header, ''))
         csv_data.append(row)
-    
+
     write_csv_file("results/statistics.csv", csv_data, available_headers)
     print(f"✅ Результаты сохранены в results/statistics.csv")
     
