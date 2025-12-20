@@ -18,7 +18,7 @@ def analyze_single_text(filepath, filename):
     text = read_text_file(filepath)
     
     if text.startswith("Ошибка"):
-        print(f"  ⚠️ Пропуск {filename}: {text}")
+        print(f" Пропуск {filename}: {text}")
         return None
     
     # Базовые метрики
@@ -42,7 +42,7 @@ def analyze_single_text(filepath, filename):
             'verb_density': lex_metrics['verb_density'],
         })
     except NameError:
-        print(f"  ⚠️ Функция лексической плотности не доступна для {filename}")
+        print(f" Функция лексической плотности не доступна для {filename}")
     
     return result
 
@@ -64,10 +64,10 @@ def analyze_corpus(corpus_folder='my_project/corpus'):
     files = get_files_in_folder(corpus_folder, '.txt')
     
     if not files:
-        print("❌ Файлы не найдены!")
+        print(" Файлы не найдены!")
         return []
     
-    print(f"✅ Найдено файлов: {len(files)}")
+    print(f" Найдено файлов: {len(files)}")
     
     # 2. Создаем папку results, если её нет
     if not os.path.exists('my_project/results'):
@@ -102,9 +102,9 @@ def analyze_corpus(corpus_folder='my_project/corpus'):
         for item in metadata_list:
             if 'filename' in item:
                 metadata[item['filename']] = item
-        print(f"✅ Загружено {len(metadata)} записей")
+        print(f" Загружено {len(metadata)} записей")
     else:
-        print(f"\n⚠️ Файл метаданных не найден: {metadata_path}")
+        print(f"\n  Файл метаданных не найден: {metadata_path}")
         print("  Будут использованы только базовые метрики")
     
     # 5. Объединяем результаты с метаданными
@@ -164,7 +164,7 @@ def analyze_corpus(corpus_folder='my_project/corpus'):
                 row.append(result.get(header, ''))
         csv_data.append(row)
     write_csv_file("my_project/results/statistics.csv", csv_data, available_headers)
-    print(f"✅ Результаты сохранены в my_project/results/statistics.csv")
+    print(f" Результаты сохранены в my_project/results/statistics.csv")
     
     # 7. Генерируем и сохраняем текстовый отчет
     generate_report(enriched_results, corpus_folder)
@@ -248,7 +248,7 @@ def generate_report(results, corpus_folder):
     
     # Выводы
     report_lines.append("\n" + "=" * 60)
-    report_lines.append("💡 РЕЗУЛЬТАТЫ:")
+    report_lines.append(" РЕЗУЛЬТАТЫ:")
     report_lines.append("=" * 60)
     
     if results:
@@ -282,7 +282,7 @@ def generate_report(results, corpus_folder):
                 report_lines.append(f"  - {author}: {len(files)} файлов")
     
     report_lines.append("\n" + "=" * 60)
-    report_lines.append("✅ Анализ завершен успешно!")
+    report_lines.append(" Анализ завершен успешно!")
     report_lines.append("=" * 60)
     
     # Сохраняем отчет в файл
@@ -293,7 +293,7 @@ def generate_report(results, corpus_folder):
     with open("my_project/results/report.txt", "w", encoding="utf-8") as f:
         f.write(report_content)
     
-    print(f"✅ Отчет сохранен в my_project/results/report.txt")
+    print(f" Отчет сохранен в my_project/results/report.txt")
 
 def print_summary(results):
     """
@@ -306,7 +306,7 @@ def print_summary(results):
         return
     
     print("\n" + "=" * 60)
-    print("📊 СВОДНАЯ СТАТИСТИКА")
+    print(" СВОДНАЯ СТАТИСТИКА")
     print("=" * 60)
     
     total_files = len(results)
@@ -315,28 +315,28 @@ def print_summary(results):
     
     print(f"📁 Всего проанализировано файлов: {total_files}")
     print(f"🔤 Общее количество слов в корпусе: {total_words:,}")
-    print(f"✨ Уникальных слов: {total_unique:,}")
+    print(f" Уникальных слов: {total_unique:,}")
     
     if total_files > 0:
         avg_words = total_words / total_files
-        print(f"📊 Среднее число слов в файле: {avg_words:,.2f}")
+        print(f" Среднее число слов в файле: {avg_words:,.2f}")
     
     # Если есть данные о лексической плотности
     if any('lexical_density' in r for r in results):
         total_lex = sum(r.get('lexical_density', 0) for r in results)
         avg_lex = total_lex / total_files if total_files > 0 else 0
-        print(f"📈 Средняя лексическая плотность: {avg_lex:.2%}")
+        print(f" Средняя лексическая плотность: {avg_lex:.2%}")
 
 def main():
     """Главная функция программы."""
     print("=" * 60)
-    print("📚 Анализ текстового корпуса")
+    print(" Анализ текстового корпуса")
     print("=" * 60)
 
     # Проверяем наличие папки corpus
     corpus_folder = 'my_project/corpus'
     if not os.path.exists(corpus_folder):
-        print(f"❌ Папка '{corpus_folder}' не найдена!")
+        print(f" Папка '{corpus_folder}' не найдена!")
         print("   Убедитесь, что папка с текстами существует.")
         return
 
@@ -345,13 +345,13 @@ def main():
 
     if results:
         print("\n" + "=" * 60)
-        print("🎉 Анализ успешно завершен!")
+        print(" Анализ успешно завершен!")
         print("=" * 60)
-        print("📁 Результаты сохранены в папке 'results/'")
+        print(" Результаты сохранены в папке 'results/'")
         print("   - statistics.csv: детальные метрики по файлам")
         print("   - report.txt: полный отчет с выводами")
     else:
-        print("\n❌ Анализ не дал результатов. Проверьте файлы в корпусе.")
+        print("\n Анализ не дал результатов. Проверьте файлы в корпусе.")
 
 if __name__ == '__main__':
     main()
